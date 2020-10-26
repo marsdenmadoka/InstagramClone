@@ -10,37 +10,45 @@
     <!--our fragments activities will rest on this frameLayout -->
     <FrameLayout
         android:id="@+id/frame_container"
-        android:layout_above="@id/app_bar_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_above="@+id/nav_view"
+
         >
 
     </FrameLayout>
-
-
-    <com.google.android.material.appbar.AppBarLayout
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/nav_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:id="@+id/app_bar_layout">
+        android:background="@android:color/white"
+        app:labelVisibilityMode="unlabeled"
+        app:menu="@menu/bottom_nav_menu"
+        android:layout_alignParentBottom="true"/>
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/home_toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:background="@android:color/white">
-            <!--our bottomnavigation inside our AppBar toolbar -->
-            <com.google.android.material.bottomnavigation.BottomNavigationView
-                android:id="@+id/nav_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@android:color/white"
-                app:labelVisibilityMode="unlabeled"
-                android:layout_marginRight="15dp"
-                app:menu="@menu/bottom_nav_menu" /> <!-- we are accessing our menu in this line -->
+<!--    <com.google.android.material.appbar.AppBarLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_alignParentBottom="true"-->
+<!--        android:id="@+id/app_bar_layout">-->
 
-        </androidx.appcompat.widget.Toolbar>
+<!--        <androidx.appcompat.widget.Toolbar-->
+<!--            android:id="@+id/home_toolbar"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="50dp"-->
+<!--            android:background="@android:color/white">-->
+<!--            &lt;!&ndash;our bottomnavigation inside our AppBar toolbar &ndash;&gt;-->
+<!--            <com.google.android.material.bottomnavigation.BottomNavigationView-->
+<!--                android:id="@+id/nav_view"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:background="@android:color/white"-->
+<!--                app:labelVisibilityMode="unlabeled"-->
+<!--                android:layout_marginRight="15dp"-->
+<!--                app:menu="@menu/bottom_nav_menu" /> &lt;!&ndash; we are accessing our menu in this line &ndash;&gt;-->
 
-    </com.google.android.material.appbar.AppBarLayout>
+<!--        </androidx.appcompat.widget.Toolbar>-->
+
+<!--    </com.google.android.material.appbar.AppBarLayout>-->
 
 </RelativeLayout>
