@@ -18,12 +18,13 @@ internal var selectedFragment: Fragment? = null
     private val onNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         when (item.itemId) {
             R.id.nav_home -> {
-            //textView.setText("Home")
-                selectedFragment=HomeFragment()
+            //textView.setText("Home") //return@OnNavigationItemSelectedListener true
+                moveToFragment(HomeFragment())
+                return@OnNavigationItemSelectedListener true
             }
             R.id.nav_search -> {
-      //textView.setText("Search") //return@OnNavigationItemSelectedListener true
-                selectedFragment=SearchFragment()
+                moveToFragment(SearchFragment())
+                return@OnNavigationItemSelectedListener true
             }
             R.id.nav_add_post -> {
                // textView.setText("Add_Post")
@@ -31,22 +32,14 @@ internal var selectedFragment: Fragment? = null
 
             }
             R.id.nav_notifications -> {
-      //textView.setText("Notifications") //return@OnNavigationItemSelectedListener true
-                selectedFragment=NotificationsFragment()
+                moveToFragment(NotificationsFragment())
+                return@OnNavigationItemSelectedListener true
             }
             R.id.nav_profile -> {
-           //  textView.setText("Pprofile") //return@OnNavigationItemSelectedListener true
-                selectedFragment=ProfileFragment()
+                moveToFragment(ProfileFragment())
+                return@OnNavigationItemSelectedListener true
             }
         }
-
-        if(selectedFragment !=null) {
-            supportFragmentManager.beginTransaction().replace(
-                R.id.frame_container,
-                selectedFragment!! //picks the selected fragment
-            ).commit()
-        }
-
         false
     }
 
@@ -59,10 +52,13 @@ internal var selectedFragment: Fragment? = null
         navView.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener)
 
 //setting our home fragment as the default view when we open the app
-        supportFragmentManager.beginTransaction().replace(
-            R.id.frame_container, //from our mainActivity.xml
-            HomeFragment()
-        ).commit()
-
+        moveToFragment(HomeFragment())
     }
+
+    private fun moveToFragment(fragment: Fragment){ //picks the selected fragment
+        val fragmentTrans=supportFragmentManager.beginTransaction()
+        fragmentTrans.replace(R.id.frame_container,fragment)
+        fragmentTrans.commit()
+    }
+
 }
