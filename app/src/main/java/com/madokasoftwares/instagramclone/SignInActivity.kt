@@ -10,7 +10,7 @@ import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_sign_in.*
 import kotlinx.android.synthetic.main.activity_sign_up.*
 
-//making this as our main activity we edit our manifest file
+//making this as our /launcher activity we edit our manifest file check the manifest file
 class SignInActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,6 +24,20 @@ class SignInActivity : AppCompatActivity() {
         }
 
     }
+
+    //when the app start since this is our launcher/launching activity it should check first if te user is signed in or not if signed direct to main activity
+    override fun onStart() {
+        super.onStart()
+
+        if(FirebaseAuth.getInstance().currentUser != null)
+        {
+            val intent = Intent(this@SignInActivity,MainActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
+            finish()
+        }
+    }
+
 
     private fun loginUser() {
         val email = email_login.text.toString()
@@ -56,16 +70,5 @@ class SignInActivity : AppCompatActivity() {
             }
         }
     }
-    //when the app start since this is our launcher/launching activity it should check first if te user is signed in or not if signed direct to main activity
-    override fun onStart() {
-        super.onStart()
 
-        if(FirebaseAuth.getInstance().currentUser != null)
-        {
-            val intent = Intent(this@SignInActivity,MainActivity::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-            startActivity(intent)
-            finish()
-        }
-    }
 }
