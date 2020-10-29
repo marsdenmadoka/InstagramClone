@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.annotation.NonNull
+import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -15,6 +16,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.FirebaseDatabaseKtxRegistrar
+import com.madokasoftwares.instagramclone.Fragments.ProfileFragment
 import com.madokasoftwares.instagramclone.Model.User
 import com.madokasoftwares.instagramclone.R
 import com.squareup.picasso.Picasso
@@ -51,13 +53,28 @@ class UserAdapter( private var mContext:Context,
      //assigns  our views to hold data from our database
      override fun onBindViewHolder(holder: UserAdapter.ViewHolder, position: Int) {
          val user =mUser[position]
+
          holder.userName.text = user.getUsername()  //get Username from db
          holder.FullName.text=user.getFullname()
          Picasso.get().load(user.getImage()).placeholder(R.drawable.profile).into(holder.userProfileImage)
 
+
+
          checkFollowingStatus(user.getUID(),holder.followButton)
 
-         holder.followButton.setOnClickListener {
+
+         //when we click the iem in the recyclerview in the search fragment
+         holder.itemView.setOnClickListener(View.OnClickListener {
+             val pref = mContext.getSharedPreferences("PREFS",Context.MODE_PRIVATE).edit()
+             pref.putString("profileId",user.getUID())
+             pref.apply()
+
+             (mContext as FragmentActivity).supportFragmentManager.beginTransaction()
+                 .replace(R.id.frame_container,ProfileFragment()).commit()
+         })
+
+
+         holder.followButton.setOnClickListener {// check the CheckFollowingStatus code first
              if(holder.followButton.text.toString()== "Follow"){
 
                  firebaseUser?.uid.let{it1 ->
@@ -108,9 +125,11 @@ class UserAdapter( private var mContext:Context,
                  }
              }
          }
+
+
      }
 
-     private fun checkFollowingStatus(uid: String, followButton: Button) {
+     private fun checkFollowingStatus(uid: String, followButton: Button) {  //check the user if he follows or is following te update te text at follow Button
          val followingRef = firebaseUser?.uid.let { it1 ->
              FirebaseDatabase.getInstance().reference
                  .child("Follow").child(it1.toString())
