@@ -25,9 +25,6 @@ class AccountSettingActivity : AppCompatActivity() {
         firebaseUser=FirebaseAuth.getInstance().currentUser!!
 
 
-        DisplayUserInfo() //to understand how the code work practical check the xml file
-
-
         logOut_btn.setOnClickListener {
             FirebaseAuth.getInstance().signOut()
             val intent = Intent(this@AccountSettingActivity,SignInActivity::class.java)
@@ -45,6 +42,8 @@ class AccountSettingActivity : AppCompatActivity() {
                 updateUserInfoOnly()
             }
         }
+
+        DisplayUserInfo() //to understand how the code work practical check the xml file
     }
 
     private fun updateUserInfoOnly() //update to firebase
@@ -54,7 +53,7 @@ class AccountSettingActivity : AppCompatActivity() {
             TextUtils.isEmpty(username.toString())-> Toast.makeText(this,"username is required", Toast.LENGTH_LONG).show()
             TextUtils.isEmpty(bio.toString())-> Toast.makeText(this,"About is required", Toast.LENGTH_LONG).show()
             else ->{
-                val usersRef= FirebaseDatabase.getInstance().getReference().child("Users").child(firebaseUser.uid)
+                val usersRef= FirebaseDatabase.getInstance().reference.child("Users")
 
                 val userMap=HashMap<String,Any>()
                 userMap["fullname"]=full_name.text.toString().toLowerCase() //remember the names of the usermap e.g userMap["fullname"] shoiuld be the same as those of signUp activity to avoid overwritting
