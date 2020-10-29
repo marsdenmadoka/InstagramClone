@@ -65,7 +65,7 @@
         android:layout_centerHorizontal="true"
 />
     <EditText
-        android:id="@+id/full_name_profile_frag"
+        android:id="@+id/full_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
@@ -76,23 +76,23 @@
         android:hint="FullName"
         />
     <EditText
-        android:id="@+id/username_profile_frag"
+        android:id="@+id/username"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        android:layout_below="@+id/full_name_profile_frag"
+        android:layout_below="@+id/full_name"
         android:layout_marginTop="16dp"
         android:inputType="text"
         android:hint="UserName"
         />
     <EditText
-        android:id="@+id/bio_profile_frag"
+        android:id="@+id/bio"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        android:layout_below="@+id/username_profile_frag"
+        android:layout_below="@+id/username"
         android:layout_marginTop="16dp"
         android:hint="Bio"
         android:inputType="text"
