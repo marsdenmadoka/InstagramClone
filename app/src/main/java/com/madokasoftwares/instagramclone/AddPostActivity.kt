@@ -88,7 +88,7 @@ class AddPostActivity : AppCompatActivity() {
 
                     val postMap=HashMap<String,Any>()
                     postMap["postid"]=postid!! //it should not be null
-                    postMap["description"]=description_post.text.toString().toLowerCase()
+                    postMap["description"]=description_post.text.toString()
                     postMap["publisher"]=FirebaseAuth.getInstance().currentUser!!.uid //get the one posting te pic
                     postMap["postimage"]=myUrl
 
