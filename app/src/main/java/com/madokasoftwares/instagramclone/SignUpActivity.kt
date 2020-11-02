@@ -86,6 +86,14 @@ class SignUpActivity : AppCompatActivity() {
                 {
              progressDialog.dismiss()
                     Toast.makeText(this,"Account has been Created successfully",Toast.LENGTH_LONG).show()
+
+
+                   //after new account creation the user should follow himself by default so that he can also view his/her own posts
+                    FirebaseDatabase.getInstance().reference
+                        .child("Follow").child(currentUserID)
+                        .child("Following").child(currentUserID)
+                        .setValue(true)
+
                     val intent = Intent(this@SignUpActivity,MainActivity::class.java)
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
                     startActivity(intent)
