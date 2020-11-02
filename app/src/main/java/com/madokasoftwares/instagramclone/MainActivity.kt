@@ -1,5 +1,6 @@
 package com.madokasoftwares.instagramclone
 
+import android.content.Intent
 import android.os.Bundle
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
@@ -28,6 +29,8 @@ internal var selectedFragment: Fragment? = null
             }
             R.id.nav_add_post -> {
                // textView.setText("Add_Post")
+                item.isChecked=false //do not turn the btn to blue
+                startActivity(Intent (this@MainActivity,AddPostActivity::class.java))
                 return@OnNavigationItemSelectedListener true
 
             }

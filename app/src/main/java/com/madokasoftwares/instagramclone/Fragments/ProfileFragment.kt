@@ -62,7 +62,8 @@ class ProfileFragment : Fragment() {
 
         when
         {
-            getButtonText == "Edit Profile" -> startActivity(Intent(context,AccountSettingActivity::class.java))
+            getButtonText == "Edit Profile" ->
+                startActivity(Intent(context,AccountSettingActivity::class.java))
 
             getButtonText== "Follow"-> { //follow the person
                 firebaseUser?.uid.let { it1 ->

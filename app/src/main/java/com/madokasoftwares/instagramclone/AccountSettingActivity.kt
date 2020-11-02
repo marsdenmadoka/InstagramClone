@@ -159,7 +159,7 @@ class AccountSettingActivity : AppCompatActivity() {
                }).addOnCompleteListener ( OnCompleteListener<Uri>{ task ->
                    if(task.isSuccessful){
                        val downloadUrl=task.result //downloading our Url and storing in to database
-                       myUrl=downloadUrl.toString()
+                       myUrl=downloadUrl.toString()//putting our file inside our firebase storage
 
                        val ref= FirebaseDatabase.getInstance().reference.child("Users")
 
