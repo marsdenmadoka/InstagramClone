@@ -61,6 +61,7 @@ class AddPostActivity : AppCompatActivity() {
             TextUtils.isEmpty(description_post.toString())-> Toast.makeText(this,"description is required is required", Toast.LENGTH_LONG).show()
 
         else ->{
+
             val progressdialog= ProgressDialog(this)
             progressdialog.setMessage("Uploading your post. please wait...")
             progressdialog.show()
@@ -68,7 +69,6 @@ class AddPostActivity : AppCompatActivity() {
 
             var uploadTask: StorageTask<*>
             uploadTask = fileRef.putFile(imageUri!!)
-
             uploadTask.continueWithTask(Continuation <UploadTask.TaskSnapshot, Task<Uri>> { task->
                 if(!task.isSuccessful){ //if task is not successful
                     task.exception?.let{
