@@ -44,6 +44,7 @@ class PostAdapter(private val mContext: Context,
 
         publisherInfo(holder.profileImage,holder.userName,holder.publisher,post.getPublisher()) //refer this to our method PublisherInfo
         NumberOfLikes(holder.likes,post.getPostid())
+        NumberOfComments(holder.comments,post.getPostid())
 
         isLikes(post.getPostid(),holder.likeButton) //method to change button colors for like button
         
@@ -105,7 +106,28 @@ val firebaseUser = FirebaseAuth.getInstance().currentUser
         LikesRef.addValueEventListener(object:ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
                 if(snapshot.exists()){
-                   likes.text=snapshot.childrenCount.toString() + "likes"//getting total number of likes and setting it in the likesText view
+                   likes.text=snapshot.childrenCount.toString() + " likes"//getting total number of likes and setting it in the likesText view
+
+                }else{
+
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+        })
+
+    }
+
+    private fun NumberOfComments(comments: TextView, postid: String)
+    {
+        val CommentsRef=FirebaseDatabase.getInstance().reference
+            .child("Comments").child(postid)
+        CommentsRef.addValueEventListener(object:ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if(snapshot.exists()){
+                    comments.text="view all"+ snapshot.childrenCount.toString() + " comments"//getting total number of likes and setting it in the likesText view
 
                 }else{
 
