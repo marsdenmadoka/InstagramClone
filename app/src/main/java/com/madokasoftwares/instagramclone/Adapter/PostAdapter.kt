@@ -15,6 +15,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.madokasoftwares.instagramclone.CommentsActivity
 import com.madokasoftwares.instagramclone.MainActivity
 import com.madokasoftwares.instagramclone.Model.Post
 import com.madokasoftwares.instagramclone.Model.User
@@ -63,8 +64,13 @@ class PostAdapter(private val mContext: Context,
              mContext.startActivity(intent)
         }
 
-
     }
+        holder.commentButton.setOnClickListener {
+            val intentComment = Intent(mContext,CommentsActivity::class.java)
+            intentComment.putExtra("postid",post.getPostid())
+            intentComment.putExtra("publisherid",post.getPublisher())
+            mContext.startActivity(intentComment)
+        }
     }
 
     private fun isLikes(postid: String, likeButton: ImageView) // setting the correct image resource when one like and unlikes the image
