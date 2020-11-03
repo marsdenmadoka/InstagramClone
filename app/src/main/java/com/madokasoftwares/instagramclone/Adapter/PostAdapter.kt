@@ -1,6 +1,7 @@
 package com.madokasoftwares.instagramclone.Adapter
 
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +15,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.madokasoftwares.instagramclone.MainActivity
 import com.madokasoftwares.instagramclone.Model.Post
 import com.madokasoftwares.instagramclone.Model.User
 import com.madokasoftwares.instagramclone.R
@@ -35,11 +37,81 @@ class PostAdapter(private val mContext: Context,
       firebaseUser= FirebaseAuth.getInstance().currentUser
 
         val post=mPost[position]
-        Picasso.get().load(post.getPostimage()).into(holder.postImage)
+        Picasso.get().load(post.getPostimage()).into(holder.postImage) //dislpay the post image
+          holder.description.setText(post.getDescription())//dislap the post description    //post is our Modelclass                                                          //display the post discription
+
 
         publisherInfo(holder.profileImage,holder.userName,holder.publisher,post.getPublisher()) //refer this to our method PublisherInfo
+        NumberOfLikes(holder.likes,post.getPostid())
+
+        isLikes(post.getPostid(),holder.likeButton) //method to change button colors for like button
+        
+    holder.likeButton.setOnClickListener {
+        //liking the post
+        if(holder.likeButton.tag == "Like"){
+    FirebaseDatabase.getInstance().reference.child("Likes") //the person likes the post
+        .child(post.getPostid())
+        .child(firebaseUser!!.uid)
+        .setValue(true)
+        }else{
+            //unliking the post
+            FirebaseDatabase.getInstance().reference.child("Likes") //remove like from the database
+                .child(post.getPostid())
+                .child(firebaseUser!!.uid)
+                .removeValue()
+            val intent = Intent(mContext,MainActivity::class.java)
+             mContext.startActivity(intent)
+        }
+
+
+    }
     }
 
+    private fun isLikes(postid: String, likeButton: ImageView) // setting the correct image resource when one like and unlikes the image
+    {
+val firebaseUser = FirebaseAuth.getInstance().currentUser
+        val LikesRef=FirebaseDatabase.getInstance().reference
+            .child("Likes").child(postid)
+
+
+         LikesRef.addValueEventListener(object:ValueEventListener{
+             override fun onDataChange(snapshot: DataSnapshot) {
+                 if(snapshot.child(firebaseUser!!.uid).exists()){
+                     likeButton.setImageResource(R.drawable.heart_clicked) //set the red iconimage resource when one clicks the like image btn
+                     likeButton.tag="Liked" //set tag
+                 }else{
+            likeButton.setImageResource(R.drawable.heart_not_clicked)
+                     likeButton.tag="Like" //
+                 }
+             }
+
+             override fun onCancelled(error: DatabaseError) {
+
+             }
+         })
+
+    }
+
+    private fun NumberOfLikes(likes: TextView, postid: String)
+    {
+        val LikesRef=FirebaseDatabase.getInstance().reference
+            .child("Likes").child(postid)
+        LikesRef.addValueEventListener(object:ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if(snapshot.exists()){
+                   likes.text=snapshot.childrenCount.toString() + "likes"//getting total number of likes and setting it in the likesText view
+
+                }else{
+
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+        })
+
+    }
 
     override fun getItemCount(): Int {
         return mPost.size
@@ -73,7 +145,7 @@ class PostAdapter(private val mContext: Context,
     }
 
 
-    private fun publisherInfo(profileImage: CircleImageView, userName: TextView, publisher: TextView, publisherID: String) {
+    private fun publisherInfo(profileImage: CircleImageView, userName: TextView, publisher: TextView, publisherID: String) { //we will display this on top of our cardview on above of our post/picture
         var usersRef = FirebaseDatabase.getInstance().reference.child("Users").child(publisherID)
        usersRef.addValueEventListener(object : ValueEventListener{
            override fun onDataChange(snapshot: DataSnapshot) {
