@@ -72,6 +72,13 @@ class PostAdapter(private val mContext: Context,
             intentComment.putExtra("publisherid",post.getPublisher())
             mContext.startActivity(intentComment)
         }
+
+        holder.comments.setOnClickListener {
+            val intentComment = Intent(mContext,CommentsActivity::class.java)
+            intentComment.putExtra("postid",post.getPostid())
+            intentComment.putExtra("publisherid",post.getPublisher())
+            mContext.startActivity(intentComment)
+        }
     }
 
     private fun isLikes(postid: String, likeButton: ImageView) // setting the correct image resource when one like and unlikes the image

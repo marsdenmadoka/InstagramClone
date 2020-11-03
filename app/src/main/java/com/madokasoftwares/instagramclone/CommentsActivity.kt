@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthActionCodeException
 import com.google.firebase.auth.FirebaseUser
@@ -12,6 +14,8 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.madokasoftwares.instagramclone.Adapter.CommentAdapter
+import com.madokasoftwares.instagramclone.Model.Comment
 import com.madokasoftwares.instagramclone.Model.User
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_account_setting.*
@@ -21,6 +25,8 @@ class CommentsActivity : AppCompatActivity() {
     private var postid = ""
     private var publisherid=""
     private var firebaseUser:FirebaseUser? = null
+    private var commentAdapter: CommentAdapter?=null
+    private var commentList:MutableList<Comment> //our model class
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,6 +38,15 @@ class CommentsActivity : AppCompatActivity() {
         publisherid=intent.getStringExtra("publisherid")
 
         firebaseUser= FirebaseAuth.getInstance().currentUser //get the currentuser the one commenting
+
+        //our recycleview to displaying our comments
+        var recyclerView:RecyclerView
+        recyclerView = findViewById(R.id.recycle_view_comments)
+        val linearLayoutManager = LinearLayoutManager(this)
+        linearLayoutManager.reverseLayout=true
+        recyclerView.layoutManager=linearLayoutManager
+
+
 
         UserCommentInfo() //follow the xml fie to understand the viewHolder where it works  //retrieve the image of the one commenting
 
