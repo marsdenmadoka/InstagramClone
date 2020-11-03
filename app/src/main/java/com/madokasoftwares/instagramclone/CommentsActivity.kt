@@ -16,6 +16,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.madokasoftwares.instagramclone.Adapter.CommentAdapter
 import com.madokasoftwares.instagramclone.Model.Comment
+import com.madokasoftwares.instagramclone.Model.Post
 import com.madokasoftwares.instagramclone.Model.User
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_account_setting.*
@@ -26,7 +27,7 @@ class CommentsActivity : AppCompatActivity() {
     private var publisherid=""
     private var firebaseUser:FirebaseUser? = null
     private var commentAdapter: CommentAdapter?=null
-    private var commentList:MutableList<Comment> //our model class
+    private var commentList:MutableList<Comment>?=null //our model class
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,10 +47,15 @@ class CommentsActivity : AppCompatActivity() {
         linearLayoutManager.reverseLayout=true
         recyclerView.layoutManager=linearLayoutManager
 
+        commentList=ArrayList()
+        commentAdapter= CommentAdapter(this,commentList)
+        recyclerView.adapter = commentAdapter
+
 
 
         UserCommentInfo() //follow the xml fie to understand the viewHolder where it works  //retrieve the image of the one commenting
-
+        readComments() //displaying our comments
+        UserPostImage()//show the user post imae
 
         post_comment.setOnClickListener(View.OnClickListener {  //post/publish our comment in the db
            if(add_comment!!.text.toString() == "")
@@ -62,7 +68,9 @@ class CommentsActivity : AppCompatActivity() {
         })
     }
 
-    private fun AddComment() { //sroing comments in our comments collection
+
+
+    private fun AddComment() { //stoing comments in our comments collection
         val CommentsRef= FirebaseDatabase.getInstance().reference
             .child("Comments").child(postid)
         val commentsMap = HashMap<String,Any>()
@@ -89,6 +97,52 @@ class CommentsActivity : AppCompatActivity() {
             override fun onCancelled(error: DatabaseError) {
 
             }
+        })
+    }
+
+
+
+    private fun UserPostImage(){ //display to account activity.xml
+        val postRef= FirebaseDatabase.getInstance()
+            .reference.child("Posts").child(postid).child("postimage")
+
+        postRef.addValueEventListener(object: ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if(snapshot.exists()){
+                    val image = snapshot.value.toString()
+                    Picasso.get().load(image).placeholder(R.drawable.profile).into(post_image_comments)
+
+                }
+            }
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+        })
+    }
+
+
+    private fun readComments(){ //read our commets
+        val commentsRef=FirebaseDatabase.getInstance().reference
+            .child("Comments").child(postid)
+
+        commentsRef.addValueEventListener(object:ValueEventListener{
+            override fun onDataChange(datasnapshot: DataSnapshot) {
+               if(datasnapshot.exists()){
+                   commentList!!.clear()
+
+                   for(snapshot in datasnapshot.children)
+                   {
+                       val comment = snapshot.getValue(Comment::class.java) //comment is our model class
+                       commentList!!.add(comment!!)
+                   }
+                commentAdapter!!.notifyDataSetChanged()
+               }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+
         })
     }
 
