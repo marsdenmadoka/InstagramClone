@@ -6,7 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.annotation.NonNull
+import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
+import com.madokasoftwares.instagramclone.Fragments.GalleryImageDetailsFragment
 import com.madokasoftwares.instagramclone.Model.Comment
 import com.madokasoftwares.instagramclone.Model.Post
 import com.madokasoftwares.instagramclone.R
@@ -38,11 +40,23 @@ class MyGalleryAdapter(private val mContext:Context,
         val view = LayoutInflater.from(mContext).inflate(
             R.layout.gallery_images_layout,parent,false)
         return ViewHolder(view)
+
+
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
        val post:Post = mPost!![position]
         Picasso.get().load(post.getPostimage()).into(holder.galleryImage)  //get the posted image the store it to gallery
+
+     holder.galleryImage.setOnClickListener {
+         val editor=mContext.getSharedPreferences("PREFS",Context.MODE_PRIVATE).edit()
+         editor.putString("postId",post.getPostid())
+         editor.apply()
+         (mContext as FragmentActivity).getSupportFragmentManager()
+             .beginTransaction()
+             .replace(R.id.frame_container,GalleryImageDetailsFragment()).commit()
+
+     }
     }
 
     override fun getItemCount(): Int {
