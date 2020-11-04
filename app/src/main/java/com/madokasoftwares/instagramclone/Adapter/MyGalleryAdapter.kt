@@ -15,7 +15,10 @@ class MyGalleryAdapter(private val mContext:Context,mPost:List<Post>)
     : RecyclerView.Adapter<MyGalleryAdapter.ViewHolder?>()
 {
 //our gallery code to be displayed in recycler_view_uploaded_pics in the ProfileFragment
-    private val mPost: List<Post>?=null
+    private var mPost: List<Post>?=null
+    init {
+        this.mPost=mPost
+    }
 
     inner class ViewHolder(@NonNull itemView: View)
         :RecyclerView.ViewHolder(itemView)
