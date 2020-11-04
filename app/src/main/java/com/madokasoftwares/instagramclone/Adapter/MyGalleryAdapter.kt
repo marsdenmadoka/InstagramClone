@@ -7,18 +7,22 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.annotation.NonNull
 import androidx.recyclerview.widget.RecyclerView
+import com.madokasoftwares.instagramclone.Model.Comment
 import com.madokasoftwares.instagramclone.Model.Post
 import com.madokasoftwares.instagramclone.R
 import com.squareup.picasso.Picasso
 
-class MyGalleryAdapter(private val mContext:Context,mPost:List<Post>)
+class MyGalleryAdapter(private val mContext:Context,
+                       private val mPost:MutableList<Post>?,
+                      // mPost:List<Post>
+    )
     : RecyclerView.Adapter<MyGalleryAdapter.ViewHolder?>()
 {
 //our gallery code to be displayed in recycler_view_uploaded_pics in the ProfileFragment
-    private var mPost: List<Post>?=null
-    init {
-        this.mPost=mPost
-    }
+   // private val mPost: List<Post>?=null
+//    init {
+//        this.mPost=mPost
+//    }
 
     inner class ViewHolder(@NonNull itemView: View)
         :RecyclerView.ViewHolder(itemView)
