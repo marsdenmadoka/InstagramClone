@@ -7,6 +7,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DataSnapshot
@@ -14,10 +17,14 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.madokasoftwares.instagramclone.AccountSettingActivity
+import com.madokasoftwares.instagramclone.Adapter.MyGalleryAdapter
+import com.madokasoftwares.instagramclone.Model.Post
 import com.madokasoftwares.instagramclone.Model.User
 import com.madokasoftwares.instagramclone.R
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_profile.view.*
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 /**
@@ -28,6 +35,8 @@ import kotlinx.android.synthetic.main.fragment_profile.view.*
 class ProfileFragment : Fragment() {
     private lateinit var myprofileid: String
     private lateinit var firebaseUser: FirebaseUser
+    var postList:List<Post>?=null
+    var mygalleryAdapter:MyGalleryAdapter?=null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,6 +64,17 @@ class ProfileFragment : Fragment() {
        checkFollowAndFollowingButtonStatus() // if its not the owner then show the follow and following status
 
       }
+
+        //displaying uploadedimages in grid layout
+        var recyclerViewUploadedImages:RecyclerView
+        recyclerViewUploadedImages=view.findViewById(R.id.recycler_view_uploaded_pics)
+        recyclerViewUploadedImages.setHasFixedSize(true)
+        val linearLayoutManager:LinearLayoutManager=GridLayoutManager(context,3)//we want to display our image in grid..3 images at side
+        recyclerViewUploadedImages.layoutManager=linearLayoutManager
+        postList = ArrayList()
+        mygalleryAdapter=context?.let { MyGalleryAdapter(it, postList as ArrayList<Post>) }
+        recyclerViewUploadedImages.adapter=mygalleryAdapter
+
 
 
     view.edit_account_settings_btn.setOnClickListener {
@@ -103,7 +123,8 @@ class ProfileFragment : Fragment() {
 
         checkNoOfFollowers() //get total no of followers and set it in the followers textView
         checkNoOfFollowing() //get total no of following and set it in the following textView
-        DisplayUserInfo()
+        DisplayUserInfo() //display user info
+        PhotoGallery() //user photo gallery where his/her uploaded pics are saved //get the posted image the store it to gallery
 
         return view
     }
@@ -172,6 +193,32 @@ class ProfileFragment : Fragment() {
 
             }
         })
+    }
+    private fun PhotoGallery(){ //user photo gallery where his/her uploaded pics are saved //get the posted image the store it to gallery
+        val postsRef=FirebaseDatabase.getInstance().reference.child("Posts")
+        postsRef.addValueEventListener(object:ValueEventListener{
+            override fun onDataChange(datasnapshot: DataSnapshot) {
+               if(datasnapshot.exists()){
+                   (postList as ArrayList<Post>).clear()//clear our list first
+                   for(snapshot in datasnapshot.children){
+                       val post = snapshot.getValue(Post::class.java)!!
+                       if(post.getPublisher().equals(myprofileid)){
+                           (postList as ArrayList<Post>).add(post) //we fetch the images form db and store them in an arraylist first
+                         Collections.reverse(postList)//we want to display the pics from the one posted recentlyy
+                           mygalleryAdapter!!.notifyDataSetChanged()
+                       }
+
+                   }
+
+               }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+
+        })
+
     }
 
     private fun DisplayUserInfo(){
