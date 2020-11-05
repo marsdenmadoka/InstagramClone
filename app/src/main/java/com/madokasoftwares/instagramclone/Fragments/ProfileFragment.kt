@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isGone
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -36,18 +37,23 @@ import kotlin.collections.ArrayList
 class ProfileFragment : Fragment() {
     private lateinit var myprofileid: String
     private lateinit var firebaseUser: FirebaseUser
+
     var postList:List<Post>?=null
     var mygalleryAdapter:MyGalleryAdapter?=null
+
+    var postListSaved:List<Post>?=null //for save pics
+    var mySavedImageAdapter:MyGalleryAdapter?=null //for saved pics
+    var mySavesImg:List<String>?=null //for saved pics
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
     }
 
-    override fun onCreateView( inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView( inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?)
+            : View? {
         // Inflate the layout for this fragment
      val view =inflater.inflate(R.layout.fragment_profile, container, false)
-
 
         //passing our shared preferences from  UserAdapter ItemView.onClickListener /when we click our recycle view item
         firebaseUser=FirebaseAuth.getInstance().currentUser!!
@@ -66,7 +72,7 @@ class ProfileFragment : Fragment() {
 
       }
 
-        //displaying uploadedimages in grid layout
+        //recycler view for uploaded images//displaying uploadedimages in grid layout
         var recyclerViewUploadedImages:RecyclerView
         recyclerViewUploadedImages=view.findViewById(R.id.recycler_view_uploaded_pics)
         recyclerViewUploadedImages.setHasFixedSize(true)
@@ -76,6 +82,31 @@ class ProfileFragment : Fragment() {
         mygalleryAdapter=context?.let { MyGalleryAdapter(it, postList as ArrayList<Post>) }
         recyclerViewUploadedImages.adapter=mygalleryAdapter
 
+
+
+        //recycler view for saved images
+        var recyclerViewSavedImages:RecyclerView
+        recyclerViewSavedImages=view.findViewById(R.id.recycler_view_saved_pics)
+        recyclerViewSavedImages.setHasFixedSize(true)
+        val linearLayoutManager2:LinearLayoutManager=GridLayoutManager(context,3)//we want to display our image in grid..3 images at side
+        recyclerViewSavedImages.layoutManager=linearLayoutManager2
+        postListSaved = ArrayList()
+        mySavedImageAdapter=context?.let { MyGalleryAdapter(it, postListSaved as ArrayList<Post>) }
+        recyclerViewSavedImages.adapter=mygalleryAdapter
+
+        //we want to display the galleryRecylerview by default when the user does not click on any of the below buttons
+        recyclerViewSavedImages.visibility=View.GONE
+        recyclerViewUploadedImages.visibility=View.VISIBLE
+
+        images_grid_view_btn.setOnClickListener {//view your gallery
+            recyclerViewSavedImages.visibility=View.GONE
+            recyclerViewUploadedImages.visibility=View.VISIBLE
+
+        }
+        images_save_btn.setOnClickListener { //view your saved pictures
+            recyclerViewSavedImages.visibility=View.VISIBLE
+            recyclerViewUploadedImages.visibility=View.GONE
+        }
 
 
     view.edit_account_settings_btn.setOnClickListener {
@@ -125,6 +156,7 @@ class ProfileFragment : Fragment() {
         DisplayUserInfo() //display user info
         PhotoGallery() //user photo gallery where his/her uploaded pics are saved //get the posted image the store it to gallery
         getTotalNumberOfPosts()//get total no of posts for the user
+        Saves()//the saved images
         return view
     }
 
@@ -287,5 +319,52 @@ class ProfileFragment : Fragment() {
             }
 
         })
+    }
+
+    private fun  Saves(){
+        mySavesImg = ArrayList()
+        val savedRef= FirebaseDatabase.getInstance()
+            .reference
+            .child("Saves").child(firebaseUser.uid)
+        savedRef.addValueEventListener(object:ValueEventListener{
+            override fun onDataChange(datasnapshot: DataSnapshot) {
+             if(datasnapshot.exists()){
+                 for(snapshot in datasnapshot.children){
+                     (mySavesImg as ArrayList<String>).add(snapshot.key!!)
+                 }
+                 readsavedImagesData() //read the images data
+             }
+
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+        })
+    }
+
+    fun readsavedImagesData(){
+        val postsRef = FirebaseDatabase.getInstance().reference.child("Posts")
+        postsRef.addValueEventListener(object :ValueEventListener{
+            override fun onDataChange(datasnapshot: DataSnapshot) {
+                if(datasnapshot.exists()){
+                    (postListSaved as ArrayList<Post>).clear()
+                    for(snapshot in datasnapshot.children){
+                        val post=snapshot.getValue(Post::class.java)
+                        for(key in mySavesImg!!) {
+                            if(post!!.getPostid() == key){
+                                (postListSaved as ArrayList<Post>).add(post!!)
+                            }
+                        }
+                    }
+                    mySavedImageAdapter!!.notifyDataSetChanged()
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+        })
+
     }
 }

@@ -86,8 +86,7 @@ class PostAdapter(private val mContext: Context,
                 FirebaseDatabase.getInstance().reference.child("Saves") //save the image
                     .child(firebaseUser!!.uid).child(post.getPostid())
                     .setValue(true)
-
-
+                Toast.makeText(mContext,"Image Saved!",Toast.LENGTH_SHORT).show();
 
             }else{
                 FirebaseDatabase.getInstance().reference.child("Saves")

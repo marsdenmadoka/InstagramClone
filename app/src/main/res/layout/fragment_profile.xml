@@ -206,11 +206,11 @@
 
     <ImageButton
         android:id="@+id/images_grid_view_btn"
+        style="?android:attr/buttonBarButtonStyle"
         android:layout_width="1dp"
-        android:layout_height="wrap_content"
-        android:src="@drawable/grid"
+        android:layout_height="match_parent"
         android:layout_weight="1"
-        style="?android:attr/buttonBarButtonStyle"/>
+        android:src="@drawable/grid" />
 
     <ImageButton
         android:id="@+id/images_save_btn"
