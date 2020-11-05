@@ -22,6 +22,7 @@ import com.madokasoftwares.instagramclone.Model.Post
 import com.madokasoftwares.instagramclone.Model.User
 import com.madokasoftwares.instagramclone.R
 import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.fragment_profile.*
 import kotlinx.android.synthetic.main.fragment_profile.view.*
 import java.util.*
 import kotlin.collections.ArrayList
@@ -125,7 +126,7 @@ class ProfileFragment : Fragment() {
         checkNoOfFollowing() //get total no of following and set it in the following textView
         DisplayUserInfo() //display user info
         PhotoGallery() //user photo gallery where his/her uploaded pics are saved //get the posted image the store it to gallery
-
+        getTotalNumberOfPosts()//get total no of posts for the user
         return view
     }
 
@@ -264,5 +265,29 @@ class ProfileFragment : Fragment() {
         val pref=context?.getSharedPreferences("PREFS",Context.MODE_PRIVATE)?.edit()
         pref?.putString("profileId",firebaseUser.uid)
         pref?.apply()
+    }
+
+    private  fun getTotalNumberOfPosts(){
+        val postsRef = FirebaseDatabase.getInstance().reference.child("Posts")
+        postsRef.addValueEventListener(object:ValueEventListener{
+
+            override fun onDataChange(datasnapshot: DataSnapshot) {
+              if(datasnapshot.exists()){
+                  var postCounter=0
+                  for(snapShot in datasnapshot.children){
+                      val post=snapShot.getValue(Post::class.java)!!
+                      if(post.getPublisher() == myprofileid){
+                     postCounter++
+                      }
+                  }
+                  total_post.text=" "+postCounter
+              }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+
+        })
     }
 }
