@@ -21,9 +21,11 @@ import com.madokasoftwares.instagramclone.MainActivity
 import com.madokasoftwares.instagramclone.Model.Post
 import com.madokasoftwares.instagramclone.Model.User
 import com.madokasoftwares.instagramclone.R
+import com.madokasoftwares.instagramclone.ShowUsersActivity
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.activity_account_setting.*
+import kotlinx.android.synthetic.main.fragment_profile.view.*
 
 //n/b POSTS WILL BE DISPLAYED BASED ON THE PERSONS YOOU FOLLOW
 class PostAdapter(private val mContext: Context,
@@ -67,7 +69,15 @@ class PostAdapter(private val mContext: Context,
         }
 
     }
-        holder.commentButton.setOnClickListener {
+
+         holder.likes.setOnClickListener {//when we click this we see the names of those who liked our posts
+            val intent = Intent(mContext, ShowUsersActivity::class.java)
+            intent.putExtra("id",post.getPostid()) //we added myprofileid so that we can get any person
+            intent.putExtra("title","likes")
+            mContext.startActivity(intent)
+        }
+
+        holder.commentButton.setOnClickListener {//when we want to write comments
             val intentComment = Intent(mContext,CommentsActivity::class.java)
             intentComment.putExtra("postid",post.getPostid())
             intentComment.putExtra("publisherid",post.getPublisher())

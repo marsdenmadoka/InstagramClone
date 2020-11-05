@@ -23,6 +23,7 @@ import com.madokasoftwares.instagramclone.Adapter.MyGalleryAdapter
 import com.madokasoftwares.instagramclone.Model.Post
 import com.madokasoftwares.instagramclone.Model.User
 import com.madokasoftwares.instagramclone.R
+import com.madokasoftwares.instagramclone.ShowUsersActivity
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_profile.*
 import kotlinx.android.synthetic.main.fragment_profile.view.*
@@ -113,6 +114,21 @@ class ProfileFragment : Fragment() {
             recyclerViewSavedImages.visibility=View.VISIBLE
             recyclerViewUploadedImages.visibility=View.GONE
         }
+
+        view.total_followers.setOnClickListener {//when we click this we see the names of followers we have
+            val intent = Intent(context,ShowUsersActivity::class.java)
+            intent.putExtra("id",myprofileid) //we added myprofileid so that we can get any person
+            intent.putExtra("title","followers")
+            startActivity(intent)
+        }
+
+        view.total_following.setOnClickListener {//when we click this we see the names of followings we have
+            val intent = Intent(context,ShowUsersActivity::class.java)
+            intent.putExtra("id",myprofileid) //we added myprofileid so that we can get any person
+            intent.putExtra("title","following")
+            startActivity(intent)
+        }
+
 
 
     view.edit_account_settings_btn.setOnClickListener {
