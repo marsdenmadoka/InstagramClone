@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import androidx.core.view.isGone
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -92,18 +93,23 @@ class ProfileFragment : Fragment() {
         recyclerViewSavedImages.layoutManager=linearLayoutManager2
         postListSaved = ArrayList()
         mySavedImageAdapter=context?.let { MyGalleryAdapter(it, postListSaved as ArrayList<Post>) }
-        recyclerViewSavedImages.adapter=mygalleryAdapter
+        recyclerViewSavedImages.adapter=mySavedImageAdapter
+
 
         //we want to display the galleryRecylerview by default when the user does not click on any of the below buttons
         recyclerViewSavedImages.visibility=View.GONE
         recyclerViewUploadedImages.visibility=View.VISIBLE
 
-        images_grid_view_btn.setOnClickListener {//view your gallery
+        var uploadedImagesbtn:ImageButton //view your gallery
+        uploadedImagesbtn=view.findViewById(R.id.images_grid_view_btn)
+        uploadedImagesbtn.setOnClickListener {
             recyclerViewSavedImages.visibility=View.GONE
             recyclerViewUploadedImages.visibility=View.VISIBLE
-
         }
-        images_save_btn.setOnClickListener { //view your saved pictures
+
+           var savedImgBtn:ImageButton   //view your saved pictures
+        savedImgBtn=view.findViewById(R.id.images_save_btn)
+        savedImgBtn.setOnClickListener {
             recyclerViewSavedImages.visibility=View.VISIBLE
             recyclerViewUploadedImages.visibility=View.GONE
         }
