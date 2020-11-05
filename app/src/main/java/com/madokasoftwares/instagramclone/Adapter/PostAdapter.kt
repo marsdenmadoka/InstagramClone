@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.NonNull
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
@@ -43,10 +44,10 @@ class PostAdapter(private val mContext: Context,
 
 
         publisherInfo(holder.profileImage,holder.userName,holder.publisher,post.getPublisher()) //refer this to our method PublisherInfo
-        NumberOfLikes(holder.likes,post.getPostid())
-        NumberOfComments(holder.comments,post.getPostid())
-
+        NumberOfLikes(holder.likes,post.getPostid())//get total no of likes
+        NumberOfComments(holder.comments,post.getPostid()) //get total no comments
         isLikes(post.getPostid(),holder.likeButton) //method to change button colors for like button
+        checkImageSavedStatus(post.getPostid(),holder.saveButton) //check the image save status if its save or not
         
     holder.likeButton.setOnClickListener {
         //liking the post
@@ -72,12 +73,27 @@ class PostAdapter(private val mContext: Context,
             intentComment.putExtra("publisherid",post.getPublisher())
             mContext.startActivity(intentComment)
         }
-
+       //when we click the view All comments
         holder.comments.setOnClickListener {
             val intentComment = Intent(mContext,CommentsActivity::class.java)
             intentComment.putExtra("postid",post.getPostid())
             intentComment.putExtra("publisherid",post.getPublisher())
             mContext.startActivity(intentComment)
+        }
+       //save our pic
+        holder.saveButton.setOnClickListener {
+            if(holder.saveButton.tag =="Save"){ //refer the Save to  checkImageSavedStatus() Method
+                FirebaseDatabase.getInstance().reference.child("Saves") //save the image
+                    .child(firebaseUser!!.uid).child(post.getPostid())
+                    .setValue(true)
+
+
+
+            }else{
+                FirebaseDatabase.getInstance().reference.child("Saves")
+                    .child(firebaseUser!!.uid).child(post.getPostid())
+                    .removeValue()
+            }
         }
     }
 
@@ -197,5 +213,27 @@ val firebaseUser = FirebaseAuth.getInstance().currentUser
            }
        })
     }
+
+  private fun  checkImageSavedStatus(postid:String,imageView: ImageView){
+      val savesRef =  FirebaseDatabase.getInstance().reference
+          .child("Saves")
+          .child(firebaseUser!!.uid)
+savesRef.addValueEventListener(object:ValueEventListener{
+    override fun onDataChange(snapshot: DataSnapshot) {
+        //if image is saved
+        if(snapshot.child(postid).exists()){
+            imageView.setImageResource(R.drawable.save_large_icon)
+            imageView.tag="Saved"
+        }else{ //if the image is not saved
+            imageView.setImageResource(R.drawable.save_unfilled_large_icon)
+            imageView.tag="Save"
+        }
+    }
+
+    override fun onCancelled(error: DatabaseError) {
+        TODO("Not yet implemented")
+    }
+})
+  }
 
 }
