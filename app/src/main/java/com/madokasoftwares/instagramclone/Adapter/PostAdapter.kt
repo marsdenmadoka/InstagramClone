@@ -25,6 +25,7 @@ import com.madokasoftwares.instagramclone.ShowUsersActivity
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.activity_account_setting.*
+import kotlinx.android.synthetic.main.activity_comments.*
 import kotlinx.android.synthetic.main.fragment_profile.view.*
 
 //n/b POSTS WILL BE DISPLAYED BASED ON THE PERSONS YOOU FOLLOW
@@ -58,6 +59,7 @@ class PostAdapter(private val mContext: Context,
         .child(post.getPostid())
         .child(firebaseUser!!.uid)
         .setValue(true)
+            AddNotification(post.getPublisher(),post.getPostid()) //wen one like we want to send a notification that so and so liked your pic
         }else{
             //unliking the post
             FirebaseDatabase.getInstance().reference.child("Likes") //remove like from the database
@@ -245,4 +247,17 @@ savesRef.addValueEventListener(object:ValueEventListener{
 })
   }
 
+
+    private fun AddNotification(userId:String,postId: String){
+        val NotificationRef=FirebaseDatabase.getInstance().reference
+            .child("Notifications").child(userId)
+        val notiMap=HashMap<String,Any>()
+        notiMap["userid"] = firebaseUser!!.uid //the online person who is going to like my post
+        notiMap["text"]="liked your post"
+        notiMap["postid"]=postId
+        notiMap["ispost"]=true
+
+        NotificationRef.push().setValue(notiMap)
+
+    }
 }

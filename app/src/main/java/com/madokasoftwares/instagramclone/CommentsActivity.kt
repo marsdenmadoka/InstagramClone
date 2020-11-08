@@ -70,7 +70,7 @@ class CommentsActivity : AppCompatActivity() {
 
 
 
-    private fun AddComment() { //stoing comments in our comments collection
+    private fun AddComment() { //stoing comments in our comments collection db
         val CommentsRef= FirebaseDatabase.getInstance().reference
             .child("Comments").child(postid)
         val commentsMap = HashMap<String,Any>()
@@ -78,7 +78,7 @@ class CommentsActivity : AppCompatActivity() {
         commentsMap["publisher"]=firebaseUser!!.uid
 
         CommentsRef.push().setValue(commentsMap)
-
+      AddNotification()//this methods we used iit since we want to add notification to tell someone that so and so has comment on your pic
         add_comment!!.text.clear()//clear the textview so that the user can add another comment if they wish
 
     }
@@ -145,5 +145,16 @@ class CommentsActivity : AppCompatActivity() {
 
         })
     }
+private fun AddNotification(){
+    val NotificationRef=FirebaseDatabase.getInstance().reference
+        .child("Notifications").child(publisherid!!)
+    val notiMap=HashMap<String,Any>()
+    notiMap["userid"] = firebaseUser!!.uid
+    notiMap["text"]="commented: " + add_comment!!.text.toString()
+    notiMap["postid"]=postid
+    notiMap["ispost"]=true
 
+    NotificationRef.push().setValue(notiMap)//create a unique key for each notification
+
+}
 }

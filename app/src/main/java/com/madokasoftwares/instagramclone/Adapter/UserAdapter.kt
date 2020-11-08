@@ -65,12 +65,14 @@ class UserAdapter( private var mContext:Context,
 
          //when we click the iem in the recyclerview in the search fragment
          holder.itemView.setOnClickListener(View.OnClickListener {
-             val pref = mContext.getSharedPreferences("PREFS",Context.MODE_PRIVATE).edit()
-             pref.putString("profileId",user.getUID())
-             pref.apply()
+           if(isFragment){
+               val pref = mContext.getSharedPreferences("PREFS",Context.MODE_PRIVATE).edit()
+               pref.putString("profileId",user.getUID())
+               pref.apply()
 
-             (mContext as FragmentActivity).supportFragmentManager.beginTransaction()
-                 .replace(R.id.frame_container,ProfileFragment()).commit()
+               (mContext as FragmentActivity).supportFragmentManager.beginTransaction()
+                   .replace(R.id.frame_container,ProfileFragment()).commit()
+           }
          })
 
 
@@ -98,8 +100,9 @@ class UserAdapter( private var mContext:Context,
                                             }
                                             }
                                            }
-
+                              AddNotification(user.getUID())
                                          }
+
              else{
 
                  firebaseUser?.uid.let{it1 ->
@@ -151,6 +154,19 @@ class UserAdapter( private var mContext:Context,
          })
 
          
+     }
+
+     private fun AddNotification(userId:String){
+         val NotificationRef=FirebaseDatabase.getInstance().reference
+             .child("Notifications").child(userId)
+         val notiMap=HashMap<String,Any>()
+         notiMap["userid"] = firebaseUser!!.uid //the online person who is going to like my post
+         notiMap["text"]="started following you"
+         notiMap["postid"]="" //since there is not post
+         notiMap["ispost"]=false//this is not a post
+
+         NotificationRef.push().setValue(notiMap)
+
      }
 
  }

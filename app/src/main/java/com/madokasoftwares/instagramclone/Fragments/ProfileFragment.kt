@@ -152,6 +152,7 @@ class ProfileFragment : Fragment() {
                         .child("Followers").child(it1.toString())
                         .setValue(true)
                 }
+                AddNotification() //add a notification to notify someone followed you
             }
 
             getButtonText== "Following"-> {  //unfollow the person
@@ -389,4 +390,19 @@ class ProfileFragment : Fragment() {
         })
 
     }
+
+
+    private fun AddNotification(){
+        val NotificationRef=FirebaseDatabase.getInstance().reference
+            .child("Notifications").child(myprofileid)
+        val notiMap=HashMap<String,Any>()
+        notiMap["userid"] = firebaseUser!!.uid //the online person who is going to like my post
+        notiMap["text"]="started following you"
+        notiMap["postid"]="" //since there is not post
+        notiMap["ispost"]=false//this is not a post
+
+        NotificationRef.push().setValue(notiMap)
+
+    }
+
 }
