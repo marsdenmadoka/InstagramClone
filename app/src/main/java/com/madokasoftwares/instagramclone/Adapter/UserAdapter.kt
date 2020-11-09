@@ -1,6 +1,7 @@
 package com.madokasoftwares.instagramclone.Adapter
 
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +18,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.FirebaseDatabaseKtxRegistrar
 import com.madokasoftwares.instagramclone.Fragments.ProfileFragment
+import com.madokasoftwares.instagramclone.MainActivity
 import com.madokasoftwares.instagramclone.Model.User
 import com.madokasoftwares.instagramclone.R
 import com.squareup.picasso.Picasso
@@ -63,7 +65,7 @@ class UserAdapter( private var mContext:Context,
          checkFollowingStatus(user.getUID(),holder.followButton)
 
 
-         //when we click the iem in the recyclerview in the search fragment
+         //when we click the item in the recyclerview in the search fragment
          holder.itemView.setOnClickListener(View.OnClickListener {
            if(isFragment){
                val pref = mContext.getSharedPreferences("PREFS",Context.MODE_PRIVATE).edit()
@@ -72,6 +74,10 @@ class UserAdapter( private var mContext:Context,
 
                (mContext as FragmentActivity).supportFragmentManager.beginTransaction()
                    .replace(R.id.frame_container,ProfileFragment()).commit()
+           }else{
+               val intent = Intent(mContext,MainActivity::class.java)
+               intent.putExtra("publisherId",user.getUID())
+               mContext.startActivity(intent)
            }
          })
 

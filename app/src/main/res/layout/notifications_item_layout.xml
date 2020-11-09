@@ -2,7 +2,7 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:layout_margin="6dp">
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/notification_profile_image"
@@ -12,7 +12,6 @@
     </de.hdodenhof.circleimageview.CircleImageView>
     <LinearLayout
         android:layout_toEndOf="@id/notification_profile_image"
-        android:layout_toStartOf="@id/notification_post_image"
         android:layout_centerVertical="true"
         android:layout_marginStart="5dp"
         android:orientation="vertical"
