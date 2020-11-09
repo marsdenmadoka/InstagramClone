@@ -100,7 +100,7 @@ RecyclerView.Adapter<StoryAdapter.ViewHolder>(){
                     val user = snapshot.getValue<User>(User::class.java)
                     Picasso.get().load(user !!.getImage()).placeholder(R.drawable.profile).into(viewHolder.story_image)
 
-                   if(position==0){
+                   if(position != 0){
                        Picasso.get().load(user !!.getImage()).placeholder(R.drawable.profile).into(viewHolder.story_image_seen)
                        viewHolder.story_username!!.text=user.getUsername()
                    }
