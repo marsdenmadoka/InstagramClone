@@ -23,7 +23,7 @@ import kotlinx.android.synthetic.main.activity_account_setting.*
 import kotlinx.android.synthetic.main.activity_add_post.*
 
 class AddPostActivity : AppCompatActivity() {
-    private lateinit var firebaseUser:FirebaseUser
+   // private lateinit var firebaseUser:FirebaseUser
     private var myUrl = ""
     private var imageUri: Uri? = null
     private var storagePostPicRef: StorageReference? = null

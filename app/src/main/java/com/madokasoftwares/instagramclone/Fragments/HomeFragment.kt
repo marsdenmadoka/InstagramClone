@@ -137,21 +137,28 @@ if(datasnapshot.exists()){
         val storyRef = FirebaseDatabase.getInstance().reference.child("Story")
         storyRef.addValueEventListener(object:ValueEventListener{
             override fun onDataChange(datasnapshot: DataSnapshot) {
-                var timeCurrent=System.currentTimeMillis()
+
+                var timeCurrent=System.currentTimeMillis() //get current time
+
                 (storyList as ArrayList<Story>).clear()
-                (storyList as ArrayList<Story>).add(Story("",0,0,"",FirebaseAuth.getInstance().currentUser!!.uid))
+                (storyList as ArrayList<Story>).add(Story("",0,0,"",FirebaseAuth.getInstance().currentUser!!.uid)) //add the story with these values in our storylist found in our model class
+
 
           for(id in followingList!!){ //we will display story for those your following
-              var countyStory = 0
+              var countyStory = 0 //intial value
               var story:Story?=null
+
               for(snapshot in datasnapshot.child(id).children){
                   story=snapshot.getValue(Story::class.java)
+
+                  //we want to show only to apear only in 24hours
                   if(timeCurrent>story!!.getTimeStart() && timeCurrent<story!!.getTimeEnd()){
-                      countyStory++
+                      countyStory++ //count the stories
                   }
               }
+
               if(countyStory>0){
-                  (storyList as ArrayList<Story>).add(story!!)
+                  (storyList as ArrayList<Story>).add(story!!) //add story to the storyList
               }
       storyAdapter!!.notifyDataSetChanged()
           }
