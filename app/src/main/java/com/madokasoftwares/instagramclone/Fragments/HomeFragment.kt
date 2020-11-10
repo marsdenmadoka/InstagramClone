@@ -47,9 +47,10 @@ class HomeFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
      val view =inflater.inflate(R.layout.fragment_home, container, false)
+        var recyclerViewStory:RecyclerView? = null
+        var recyclerView:RecyclerView? = null
 
         //for our posts
-        var recyclerView:RecyclerView? = null
         recyclerView = view.findViewById(R.id.recycler_view_home)
         val linearLayoutManager = LinearLayoutManager(context)
         linearLayoutManager.reverseLayout = true
@@ -63,11 +64,10 @@ class HomeFragment : Fragment() {
 
 
         //story recycler view
-        var recyclerViewStory:RecyclerView? = null
+
         recyclerViewStory = view.findViewById(R.id.recycler_view_Story)
-        val linearLayoutManager2 = LinearLayoutManager(context)
-        linearLayoutManager2.reverseLayout = true
-        linearLayoutManager2.stackFromEnd = true
+        recyclerViewStory.setHasFixedSize(true)
+        val linearLayoutManager2 = LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false)
         recyclerViewStory.layoutManager=linearLayoutManager2
 
 

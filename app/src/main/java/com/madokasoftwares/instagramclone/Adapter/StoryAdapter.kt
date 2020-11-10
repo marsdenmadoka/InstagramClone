@@ -71,7 +71,7 @@ RecyclerView.Adapter<StoryAdapter.ViewHolder>(){
 
         holder.itemView.setOnClickListener {
           if(holder.adapterPosition===0){
-              myStories(holder.addStory_text!!,holder.story_plus_btn!!,false)
+              myStories(holder.addStory_text!!,holder.story_plus_btn!!,true)
           }else{
               val intent = Intent(mContext, AddStoryActivity::class.java)
               intent.putExtra("userid",story.getUserId())
@@ -110,7 +110,7 @@ RecyclerView.Adapter<StoryAdapter.ViewHolder>(){
 
     private fun UserInfo(viewHolder: ViewHolder,userid:String,position: Int){
         val usersRef= FirebaseDatabase.getInstance().getReference().child("Users").child(userid)
-        usersRef.addValueEventListener(object: ValueEventListener {
+        usersRef.addListenerForSingleValueEvent(object: ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if(snapshot.exists()){
                     val user = snapshot.getValue<User>(User::class.java)
@@ -140,14 +140,14 @@ RecyclerView.Adapter<StoryAdapter.ViewHolder>(){
             .child("Story")
             .child(userId)
 
-        storyRef.addListenerForSingleValueEvent(object :ValueEventListener{
+        storyRef.addValueEventListener(object :ValueEventListener{
             override fun onDataChange(datasnapshot: DataSnapshot) {
                var i=0
                 for(snapshot in datasnapshot.children){
                     if(!snapshot.child("views").child(FirebaseAuth.getInstance()
                             .currentUser!!.uid).exists() && System.currentTimeMillis() < snapshot.getValue(Story::class.java)!!.getTimeEnd())
                     {
-                   i=i+1
+                   i++
                     }
 
                 }
@@ -170,7 +170,7 @@ RecyclerView.Adapter<StoryAdapter.ViewHolder>(){
         val storyRef = FirebaseDatabase.getInstance().reference
             .child("Story")
             .child(FirebaseAuth.getInstance().currentUser!!.uid)
-        storyRef.addValueEventListener(object:ValueEventListener{
+        storyRef.addListenerForSingleValueEvent(object:ValueEventListener{
             override fun onDataChange(datasnapshot: DataSnapshot) {
                var counter=0
                 var timeCurrent=System.currentTimeMillis()
@@ -190,31 +190,36 @@ RecyclerView.Adapter<StoryAdapter.ViewHolder>(){
                         {
                             dialogInterface,which->
                             val intent = Intent(mContext, Display_Story_Activity::class.java)
-                            intent.putExtra("userid",FirebaseAuth.getInstance().currentUser!!.uid)
+                            intent.putExtra("userId",FirebaseAuth.getInstance().currentUser!!.uid)
                             mContext.startActivity(intent)
-                            alertDialog.dismiss()
+                            dialogInterface.dismiss()
                         }
 
                         alertDialog.setButton(AlertDialog.BUTTON_POSITIVE,"Add Story")
                         {
                                 dialogInterface,which->
                             val intent = Intent(mContext, AddStoryActivity::class.java)
-                            intent.putExtra("userid",FirebaseAuth.getInstance().currentUser!!.uid)
+                            intent.putExtra("userId",FirebaseAuth.getInstance().currentUser!!.uid)
                             mContext.startActivity(intent)
-                            alertDialog.dismiss()
+                            dialogInterface.dismiss()
                         }
                         alertDialog.show()
+                    }else{
+                        val intent = Intent(mContext, AddStoryActivity::class.java)
+                        intent.putExtra("userid",FirebaseAuth.getInstance().currentUser!!.uid)
+                        mContext.startActivity(intent)
                     }
-                    else{
-                        if(counter>0){
-                            textView.text="My Story"
-                            imageView.visibility=View.GONE
-                        }else{
-                            textView.text="Add Story"
-                            imageView.visibility=View.VISIBLE
-                        }
 
+                }
+                else{
+                    if(counter>0){
+                        textView.text="My Story"
+                        imageView.visibility=View.GONE
+                    }else{
+                        textView.text="Add Story"
+                        imageView.visibility=View.VISIBLE
                     }
+
                 }
             }
 

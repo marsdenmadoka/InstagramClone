@@ -54,7 +54,7 @@ class Display_Story_Activity : AppCompatActivity(), StoriesProgressView.StoriesL
         setContentView(R.layout.activity_display__story_)
 
         currentUserId=FirebaseAuth.getInstance().currentUser!!.uid
-        userId=intent.getStringExtra("userid")//from
+        userId=intent.getStringExtra("userId")//from
        // counter=intent.getStringExtra("userid")
 
         storiesProgressView=findViewById(R.id.stories_progress)
@@ -204,6 +204,7 @@ class Display_Story_Activity : AppCompatActivity(), StoriesProgressView.StoriesL
 
     override fun onPrev() { //once the story is seen by user we decrease teh index by one number
                             //e.g a user moves from story 4 to story 3
+        if(counter-1 < 0) return
         Picasso.get().load(imagesList!![--counter]).placeholder(R.drawable.profile).into(image_story)
         seenNumber(storyIdsList!![counter])
     }

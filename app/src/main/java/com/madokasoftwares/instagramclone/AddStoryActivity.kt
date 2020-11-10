@@ -78,7 +78,8 @@ class AddStoryActivity : AppCompatActivity() {
                         val downloadUrl=task.result //downloading our Url and storing in to database
                         myUrl=downloadUrl.toString() //putting our file inside our firebase storage
 
-                        val ref= FirebaseDatabase.getInstance().reference.child("Story") //where we will store our downloadurl for images in datasebase
+                        val ref= FirebaseDatabase.getInstance().reference.child("Story")
+                            .child(FirebaseAuth.getInstance().currentUser!!.uid)//where we will store our downloadurl for images in datasebase
                         val storyid = (ref.push().key).toString() //ceating a random key for every pic since our user will post many pics this is different as that one of profile pic
 
 
