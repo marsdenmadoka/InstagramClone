@@ -1,5 +1,6 @@
 package com.madokasoftwares.instagramclone.Adapter
 
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.view.LayoutInflater
@@ -10,11 +11,13 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.NonNull
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.madokasoftwares.instagramclone.AddStoryActivity
+import com.madokasoftwares.instagramclone.Display_Story_Activity
 import com.madokasoftwares.instagramclone.MainActivity
 import com.madokasoftwares.instagramclone.Model.Story
 import com.madokasoftwares.instagramclone.Model.User
@@ -57,10 +60,23 @@ RecyclerView.Adapter<StoryAdapter.ViewHolder>(){
 
         UserInfo(holder,story.getUserId(),position)//our method
 
+
+         if(holder.adapterPosition !==0)
+         {
+             seenStory(holder,story.getUserId())
+         }
+        if(holder.adapterPosition===0){
+            myStories(holder.addStory_text!!,holder.story_plus_btn!!,false)
+        }
+
         holder.itemView.setOnClickListener {
-            val intent = Intent(mContext, AddStoryActivity::class.java)
-           intent.putExtra("userid",story.getUserId())
-            mContext.startActivity(intent)
+          if(holder.adapterPosition===0){
+              myStories(holder.addStory_text!!,holder.story_plus_btn!!,false)
+          }else{
+              val intent = Intent(mContext, AddStoryActivity::class.java)
+              intent.putExtra("userid",story.getUserId())
+              mContext.startActivity(intent)
+          }
 
         }
     }
@@ -115,6 +131,96 @@ RecyclerView.Adapter<StoryAdapter.ViewHolder>(){
             }
 
 
+        })
+    }
+
+
+    private fun seenStory(viewholder:ViewHolder,userId:String){
+        val storyRef = FirebaseDatabase.getInstance().reference
+            .child("Story")
+            .child(userId)
+
+        storyRef.addListenerForSingleValueEvent(object :ValueEventListener{
+            override fun onDataChange(datasnapshot: DataSnapshot) {
+               var i=0
+                for(snapshot in datasnapshot.children){
+                    if(!snapshot.child("views").child(FirebaseAuth.getInstance()
+                            .currentUser!!.uid).exists() && System.currentTimeMillis() < snapshot.getValue(Story::class.java)!!.getTimeEnd())
+                    {
+                   i=i+1
+                    }
+
+                }
+                if(i>0){
+                    viewholder.story_image!!.visibility=View.VISIBLE
+                    viewholder.story_image_seen!!.visibility=View.GONE
+                }else{
+                    viewholder.story_image!!.visibility=View.GONE
+                    viewholder.story_image_seen!!.visibility=View.VISIBLE
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+        })
+    }
+
+    private fun myStories(textView: TextView,imageView: ImageView,click:Boolean){
+        val storyRef = FirebaseDatabase.getInstance().reference
+            .child("Story")
+            .child(FirebaseAuth.getInstance().currentUser!!.uid)
+        storyRef.addValueEventListener(object:ValueEventListener{
+            override fun onDataChange(datasnapshot: DataSnapshot) {
+               var counter=0
+                var timeCurrent=System.currentTimeMillis()
+
+                for(snapshot in datasnapshot.children){
+                   val story=snapshot.getValue(Story::class.java)
+
+                    //we want to show only to apear only in 24hours
+                    if(timeCurrent>story!!.getTimeStart() && timeCurrent<story!!.getTimeEnd()){
+                        counter++ //count the stories
+                    }
+                }
+                if(click){
+                    if(counter>0){
+                        val alertDialog=AlertDialog.Builder(mContext).create()
+                        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL,"View Story")
+                        {
+                            dialogInterface,which->
+                            val intent = Intent(mContext, Display_Story_Activity::class.java)
+                            intent.putExtra("userid",FirebaseAuth.getInstance().currentUser!!.uid)
+                            mContext.startActivity(intent)
+                            alertDialog.dismiss()
+                        }
+
+                        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE,"Add Story")
+                        {
+                                dialogInterface,which->
+                            val intent = Intent(mContext, AddStoryActivity::class.java)
+                            intent.putExtra("userid",FirebaseAuth.getInstance().currentUser!!.uid)
+                            mContext.startActivity(intent)
+                            alertDialog.dismiss()
+                        }
+                        alertDialog.show()
+                    }
+                    else{
+                        if(counter>0){
+                            textView.text="My Story"
+                            imageView.visibility=View.GONE
+                        }else{
+                            textView.text="Add Story"
+                            imageView.visibility=View.VISIBLE
+                        }
+
+                    }
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
         })
     }
 

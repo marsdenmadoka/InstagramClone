@@ -81,13 +81,13 @@ class Display_Story_Activity : AppCompatActivity(), StoriesProgressView.StoriesL
         skip.setOnClickListener { storiesProgressView!!.skip()}
         skip.setOnTouchListener(onTouchListener)
 
-        seen_number.setOnClickListener({
+        seen_number.setOnClickListener{
             val intent =Intent(this@Display_Story_Activity,ShowUsersActivity::class.java)
             intent.putExtra("id",userId)
             intent.putExtra("storyid",storyIdsList!![counter])
             intent.putExtra("title","views")
             startActivity(intent)
-        })
+        }
 
         story_delete.setOnClickListener {
             val ref=FirebaseDatabase.getInstance().reference
