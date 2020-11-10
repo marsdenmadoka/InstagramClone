@@ -57,9 +57,6 @@ class ShowUsersActivity : AppCompatActivity() {
         }
     }
 
-    private fun getViews() {
-
-    }
 
     private fun getFollowers() {
         val followersRef = FirebaseDatabase.getInstance().reference
@@ -120,6 +117,30 @@ class ShowUsersActivity : AppCompatActivity() {
             }
         })
     }
+
+
+
+    private fun getViews() {
+        val followersRef = FirebaseDatabase.getInstance().reference
+            .child("Story").child(id!!)
+            .child(intent.getStringExtra("storyid"))
+            .child("views")
+
+        followersRef.addValueEventListener(object:ValueEventListener{
+            override fun onDataChange(datasnapshot: DataSnapshot) {
+                (userList as ArrayList<User>).clear()
+                for(snapshot in datasnapshot.children){
+                    (idList as ArrayList<String>).add(snapshot.key!!)
+                }
+                showUsers()
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+        })
+    }
+
 
     private fun showUsers() {
         val usersRef= FirebaseDatabase.getInstance().getReference().child("Users")
