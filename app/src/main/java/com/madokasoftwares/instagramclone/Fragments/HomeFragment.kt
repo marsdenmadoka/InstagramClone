@@ -1,5 +1,6 @@
 package com.madokasoftwares.instagramclone.Fragments
 
+import android.app.ProgressDialog
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
@@ -78,8 +79,15 @@ class HomeFragment : Fragment() {
         val linearLayoutManager2 = LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false)
         recyclerViewStory.layoutManager=linearLayoutManager2
 
+        val progressdialog= ProgressDialog(getActivity())
         //check the internet
-        if(activeNetwork != null){
+        if(activeNetwork == null){
+
+            progressdialog.setMessage("no internet please try again. please wait retring...")
+            progressdialog.show()
+            Toast.makeText(getActivity(),"no internet",Toast.LENGTH_LONG).show();
+        }else{
+            progressdialog.dismiss()
             postList=ArrayList()
             postAdapter= context?.let{PostAdapter(it,postList as ArrayList<Post>)}
             recyclerView.adapter=postAdapter
@@ -90,15 +98,9 @@ class HomeFragment : Fragment() {
             storyAdapter= context?.let{StoryAdapter(it,storyList as ArrayList<Story>)}
             recyclerViewStory.adapter=storyAdapter
             //end
-
-
             checkFollowings()
 
-        }else{
-            Toast.makeText(getActivity(),"no internet please try again",Toast.LENGTH_LONG).show();
         }
-
-
     return view
     }
 
