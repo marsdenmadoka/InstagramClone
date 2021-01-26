@@ -86,12 +86,12 @@ class HomeFragment : Fragment() {
             progressdialog.setMessage("no internet please try again. please wait retring...")
             progressdialog.show()
             Toast.makeText(getActivity(),"no internet",Toast.LENGTH_LONG).show();
-        }else{
-            progressdialog.dismiss()
+        }
+
+
             postList=ArrayList()
             postAdapter= context?.let{PostAdapter(it,postList as ArrayList<Post>)}
             recyclerView.adapter=postAdapter
-
 
 
             storyList=ArrayList()
@@ -99,9 +99,10 @@ class HomeFragment : Fragment() {
             recyclerViewStory.adapter=storyAdapter
             //end
             checkFollowings()
+         // progressdialog.dismiss()
 
-        }
-    return view
+
+        return view
     }
 
     private fun checkFollowings() { //we want to display our post and stories based on who your following
