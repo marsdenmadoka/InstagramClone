@@ -1,10 +1,15 @@
 package com.madokasoftwares.instagramclone.Fragments
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkInfo
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.content.getSystemService
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
@@ -36,8 +41,10 @@ class HomeFragment : Fragment() {
     private var storyList:MutableList<Story>?=null
 
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+       // NetworkX.startObserving(this, NetworkXObservingStrategy.HIGH)
 
     }
 
@@ -45,6 +52,11 @@ class HomeFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
+        val cm=context?.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val activeNetwork: NetworkInfo? = cm.activeNetworkInfo
+        //val isConnected: Boolean = activeNetwork?.isConnectedOrConnecting == true
+
         // Inflate the layout for this fragment
      val view =inflater.inflate(R.layout.fragment_home, container, false)
         var recyclerViewStory:RecyclerView? = null
@@ -58,10 +70,6 @@ class HomeFragment : Fragment() {
         recyclerView.layoutManager=linearLayoutManager
 
 
-        postList=ArrayList()
-        postAdapter= context?.let{PostAdapter(it,postList as ArrayList<Post>)}
-        recyclerView.adapter=postAdapter
-
 
         //story recycler view
 
@@ -70,14 +78,25 @@ class HomeFragment : Fragment() {
         val linearLayoutManager2 = LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false)
         recyclerViewStory.layoutManager=linearLayoutManager2
 
+        //check the internet
+        if(activeNetwork != null){
+            postList=ArrayList()
+            postAdapter= context?.let{PostAdapter(it,postList as ArrayList<Post>)}
+            recyclerView.adapter=postAdapter
 
-        storyList=ArrayList()
-        storyAdapter= context?.let{StoryAdapter(it,storyList as ArrayList<Story>)}
-        recyclerViewStory.adapter=storyAdapter
-        //end
 
 
-        checkFollowings()
+            storyList=ArrayList()
+            storyAdapter= context?.let{StoryAdapter(it,storyList as ArrayList<Story>)}
+            recyclerViewStory.adapter=storyAdapter
+            //end
+
+
+            checkFollowings()
+
+        }else{
+            Toast.makeText(getActivity(),"no internet please try again",Toast.LENGTH_LONG).show();
+        }
 
 
     return view
